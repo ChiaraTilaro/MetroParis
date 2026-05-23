@@ -36,6 +36,32 @@ class Model:
             v = self._idMapFermate[conn.id_stazA]
             self._grafo.add_edge(u , v)
 
+    def getBFSNodesEdges(self, source):
+        archi = nx.bfs_edges(self._grafo , source)
+        nodiBfs = []
+        for u,v in archi:
+            nodiBfs.append(v)
+        return nodiBfs
+
+    def getDFSNodesEdges(self, source):
+        archi = nx.dfs_edges(self._grafo , source)
+        nodiDfs = []
+        for u,v in archi:
+            nodiDfs.append(v)
+        return nodiDfs
+
+    def getBfsNodesFromTree(self , source):
+        tree = nx.bfs_tree(self._grafo, source)
+        archi =list(tree.edges())
+        nodi = list(tree.nodes())
+        return  nodi
+
+    def getDfsNodesFromTree(self , source):
+        tree = nx.dfs_tree(self._grafo, source)
+        archi =list(tree.edges())
+        nodi = list(tree.nodes())
+        return  nodi
+
     def get_numnodi(self):
         return len(self._grafo.nodes)
 
@@ -44,4 +70,4 @@ class Model:
 
     @property
     def fermate(self):
-        return self.fermate
+        return self._fermate
