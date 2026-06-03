@@ -12,6 +12,43 @@ class Model:
         for f in self._fermate:
             self._idMapFermate[f.id_fermata] =f
 
+
+    def buildGraphPesato(self):
+        self._grafo.clear()
+        self._grafo.add_nodes_from(self._fermate)
+        self.addEdgesPesati()
+
+    def addEdgesPesati(self):
+        # riutilizzare il principio di funzionamento del metodo addEdges3 ma contando quante volto provo ad aggiungere l'arco
+        self._grafo.clear_edges()
+        alledges = DAO.getAllEdges()
+        for conn in alledges:
+            u = self._idMapFermate[conn.id_stazP]
+            v = self._idMapFermate[conn.id_stazA]
+            if self._grafo.has_edge(u,v):
+                self._grafo[u][v]["weight"]+=1
+            else:
+                self._grafo.add_edge(u , v , weight = 1)
+
+    def addEdgesPesati2(self):
+        # delega il calcolo del peso alla query sql per semplificare la vita in python
+        self._grafo.clear_edges()
+        allEdgesWPeso = DAO.getAllEdgesPesati()
+        for e in allEdgesWPeso:
+            u = self._idMapFermate[e[0]]
+            v = self._idMapFermate[e[1]]
+            peso = e[2]
+            self._grafo.add_edge(u ,v , weight = peso)
+
+    def getArchiPesoMaggiore(self):
+        edges = self._grafo.edges(data = True)
+        edgesMaggiori = []
+        for e in edges:
+            if self._grafo.get_edge_data(e[0], e[1])["weight"] > 1:
+                edgesMaggiori.append(e)
+        return edgesMaggiori
+
+
     def buildGraph(self):
         self._grafo.clear()
         self._grafo.add_nodes_from(self._fermate)
@@ -30,6 +67,7 @@ class Model:
                 self._grafo.add_edge(u , v)
 
     def addedges3(self):
+        self._grafo.clear_edges()
         alledges = DAO.getAllEdges()
         for conn in alledges:
             u = self._idMapFermate[conn.id_stazP]

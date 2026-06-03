@@ -77,3 +77,25 @@ where c.id_stazP = %s"""
         conn.close()
         return result
 
+    @staticmethod
+    def getAllEdgesPesati():
+        conn = DBConnect.get_connection()
+
+        result = []
+
+        cursor = conn.cursor(dictionary=True)
+        query = """
+        select c.id_stazP , c.id_stazA , COUNT(*) as peso
+from connessione c 
+group by c.id_stazA , c.id_stazP 
+order by peso desc 
+        """
+        cursor.execute(query)
+
+        for row in cursor:
+            result.append((row["id_stazP"], row["id_stazA"] , row["peso"]))
+
+        cursor.close()
+        conn.close()
+        return result
+
