@@ -99,3 +99,26 @@ order by peso desc
         conn.close()
         return result
 
+    @staticmethod
+    def getAllEdgesVelocita():
+        conn = DBConnect.get_connection()
+
+        result = []
+
+        cursor = conn.cursor(dictionary=True)
+        query = """
+        select c.id_stazP , c.id_stazA , max(l.velocita) as v
+from connessione c , linea l
+where l.id_linea = c.id_linea
+group by c.id_stazA , c.id_stazP 
+order by v asc
+        """
+        cursor.execute(query)
+
+        for row in cursor:
+            result.append((row["id_stazP"], row["id_stazA"] , row["v"]))
+
+        cursor.close()
+        conn.close()
+        return result
+
